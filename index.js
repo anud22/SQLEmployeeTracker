@@ -1,17 +1,16 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
+require('dotenv').config();
 
 // Connect to database
 const db = mysql.createConnection(
     {
-        host: 'localhost',
-        // MySQL username,
-        user: 'root',
-        // MySQL password
-        password: '',
-        database: 'employee_db'
+        host: DB_HOST,
+        user: DB_USER,
+        password: DB_PASSWORD,
+        database: DB_NAME
     },
-    console.log(`Connected to the courses_db database.`)
+    console.log(`Connected to the database.`)
 ); 
 db.connect((err) => {
     if (err) {
