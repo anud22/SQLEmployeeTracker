@@ -15,13 +15,13 @@ class Database {
 
 
     executeQuery(query) {
-        this.dbConnection.query(query, (err, result) => {
-            if (err) {
-                console.log(err);
-            } else {
-                console.table(result);
-            }
-        });
+        try {
+            this.dbConnection.promise().query(query).then(([rows, fields]) => {
+                console.table(rows);
+            });
+        } catch (err) {
+            console.error('Error happened while executing query', err);
+        }
     }
 
     getAllDepartmentsQuery = () => this.executeQuery('SELECT * FROM department;');
