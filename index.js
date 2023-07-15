@@ -1,24 +1,8 @@
 const inquirer = require('inquirer');
-const mysql = require('mysql2');
-require('dotenv').config();
+const Database = require('./db/Database');
 
 // Connect to database
-const db = mysql.createConnection(
-    {
-        host: DB_HOST,
-        user: DB_USER,
-        password: DB_PASSWORD,
-        database: DB_NAME
-    },
-    console.log(`Connected to the database.`)
-); 
-db.connect((err) => {
-    if (err) {
-      console.error('Error connecting to the database:', err);
-      return;
-    }
-    questions();
-});
+const db = new Database();
 const questions = function promptUser() {
     inquirer
         .prompt([
@@ -33,7 +17,8 @@ const questions = function promptUser() {
                     'Add a department',
                     'Add a role',
                     'Add an employee',
-                    'Update an employee role'
+                    'Update an employee role',
+                    'Quit'
                 ]
             }
         ])
@@ -41,103 +26,26 @@ const questions = function promptUser() {
             const selectedOption = answers.question;
             console.log(`You selected: ${selectedOption}`);
             if (selectedOption === 'View all departments') {
-                db.query(`SELECT * FROM DEPARTMENT`, (err, result) => {
-                    if (err) {
-                        console.log(err);
-                    }
-                    console.log( console.table(result));
-                });
-                //run query
+                db.getAllDepartmentsQuery();
             } else if (selectedOption === 'View all roles') {
+                db.getAllRolesQuery();
             } else if (selectedOption === 'View all employees') {
+                db.getAllEmployeesQuery();
             } else if (selectedOption === 'Add a department') {
-                inquirer.prompt([
-                    {
-                        type: 'input',
-                        name: 'department',
-                        message: 'Enter department'
-                    },
-                ])
-                    .then((answers) => {
-
-                    });
+                // Code to handle adding a department
             } else if (selectedOption === 'Add a role') {
-                inquirer.prompt([
-                    {
-                        type: 'input',
-                        name: 'role',
-                        message: 'Enter role'
-                    },
-                ])
-                    .then((answers) => {
-                        inquirer.prompt([
-                            {
-                                type: 'input',
-                                name: 'title',
-                                message: 'Enter title'
-                            },
-                            {
-                                type: 'input',
-                                name: 'salary',
-                                message: 'Enter salary'
-                            },
-                            {
-                                type: 'input',
-                                name: 'department',
-                                message: 'Enter department'
-                            }])
-                    });
-
-            } else if (selectedOption === 'Add a employee') {
-                inquirer.prompt([
-                    {
-                        type: 'input',
-                        name: 'first_name',
-                        message: 'Enter first name'
-                    },
-                    {
-                        type: 'input',
-                        name: 'last_name',
-                        message: 'Enter last name'
-                    },
-                    {
-                        type: 'input',
-                        name: 'role',
-                        message: 'Enter role'
-                    },
-                    {
-                        type: 'input',
-                        name: 'manager',
-                        message: 'Enter manager'
-                    }
-                ])
-                    .then((answers) => {
-
-                    });
-
-            } else if (selectedOption === 'Update a employee role') {
-                inquirer.prompt([
-                    {
-                        type: 'input',
-                        name: 'first_name',
-                        message: 'Enter first name'
-                    },
-                    {
-                        type: 'input',
-                        name: 'last_name',
-                        message: 'Enter last name'
-                    },
-                    {
-                        type: 'input',
-                        name: 'role',
-                        message: 'Enter role'
-                    }
-                ])
-                    .then((answers) => {
-
-                    });
+                // Code to handle adding a role
+            } else if (selectedOption === 'Add an employee') {
+                // Code to handle adding an employee
+            } else if (selectedOption === 'Update an employee role') {
+                // Code to handle updating an employee role
+            } else if (selectedOption === 'Quit') {
+                console.log('Goodbye!');
+                process.exit(0);
             }
+            // Call promptUser again to show the options after handling the selected option
+            promptUser();
         });
-}
-;
+};
 
+questions();
