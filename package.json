@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/anud22/SQLEmployeeTracker#readme",
   "dependencies": {
+    "cli-table": "^0.3.11",
     "dotenv": "^16.3.1",
     "inquirer": "^8.2.4",
     "mysql2": "^2.2.5"

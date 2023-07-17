@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const Database = require('./db/Database');
+const displayResults = require('./db/Helper');
 
 // Connect to database
 const db = new Database();
@@ -27,15 +28,15 @@ const questions = function promptUser() {
             console.log(`You selected: ${selectedOption}`);
             if (selectedOption === 'View all departments') {
                 const departments = await db.getAllDepartmentsQuery();
-                console.table(departments);
+               displayResults(departments);
                 promptUser();
             } else if (selectedOption === 'View all roles') {
                 const roles = await db.getAllRolesQuery();
-                console.table(roles);
+                displayResults(roles);
                 promptUser();
             } else if (selectedOption === 'View all employees') {
                 const employees = await db.getAllEmployeesQuery();
-                console.table(employees);
+                displayResults(employees);
                 promptUser();
             } else if (selectedOption === 'Add a department') {
                 inquirer.prompt([

@@ -24,7 +24,7 @@ class Database {
             });
         });
     }
-    getAllDepartmentsQuery = async () => await this.executeQuery('SELECT * FROM department;');
+    getAllDepartmentsQuery = async () => await this.executeQuery('SELECT * FROM department order by id;');
     getAllRolesQuery = async () => await this.executeQuery('SELECT * FROM role;');
     getAllEmployeesQuery = async () => await this.executeQuery('SELECT * FROM employee;');
     addDepartmentQuery = async (name) => {
@@ -136,11 +136,7 @@ class Database {
             console.error(err, 'Employee not added');
         }
     }
-    /*
-    const addRoleQuery = 'INSERT INTO role(id, title, salary, department_id) VALUES (?, ?, ?, ?);';
-    const addEmployeeQuery = 'INSERT INTO employee (id, first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?, ?);';
-    const updateEmployeeRoleQuery = 'UPDATE employees SET role_id = ? WHERE first_name = ? AND last_name = ?;';
-    */
+
 }
 
 
