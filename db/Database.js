@@ -106,7 +106,7 @@ class Database {
         }
     };
 
-    getManagerIdQuery = async (firstname, lastname) => {
+    getEmployeeIdQuery = async (firstname, lastname) => {
         try {
             const rows = await this.executeQuery(`SELECT id FROM employee where first_name = '${firstname}' and last_name = '${lastname}';`);
             const id = rows[0]['id'];
@@ -127,7 +127,7 @@ class Database {
             if (!manager.toLowerCase().includes('none')) {
                 const managerFirstname = manager.split(" ")[0];
                 const managerLastname = manager.split(" ")[1];
-                managerId = await this.getManagerIdQuery(managerFirstname, managerLastname);
+                managerId = await this.getEmployeeIdQuery(managerFirstname, managerLastname);
                 if (!managerId) {
                     throw new Error('Manager not found');
                 }
@@ -135,6 +135,22 @@ class Database {
             const id = await this.getNextIdFromEmployeeQuery();
             await this.executeQuery(`INSERT INTO employee (id, first_name, last_name, role_id, manager_id) VALUES(${id}, '${firstname}', '${lastname}', ${roleId} , ${managerId});`);
             console.log(`Employee ${firstname}` + ' ' + `${lastname} added in the database`);
+        } catch (err) {
+            console.error(err, 'Employee not added');
+        }
+    }
+
+    updateEmployeeRoleQuery = async (name, role) => {
+        try {
+            const roleId = await this.getRoleIdQuery(role);
+            if (!roleId) {
+                throw new Error('Role not found');
+            }
+            const firstname = name.split(" ")[0];
+            const lastname = name.split(" ")[1];
+
+            await this.executeQuery(`UPDATE employee SET role_id = ${roleId} WHERE first_name = '${firstname}' and last_name= '${lastname}';`);
+            console.log(`Employee ${firstname}` + ' ' + `${lastname} role was changed to ${role} in the database`);
         } catch (err) {
             console.error(err, 'Employee not added');
         }

@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 const Database = require('./db/Database');
-const {displayResults, getRowsValues} = require('./db/Helper');
+const { displayResults, getRowsValues } = require('./db/Helper');
 
 // Connect to database
 const db = new Database();
@@ -68,7 +68,7 @@ const questions = function promptUser() {
                         type: 'list',
                         message: 'Which department does the role belong to?',
                         name: 'department',
-                        choices:departmentNames
+                        choices: departmentNames
                     },
                 ])
                     .then(async (answer) => {
@@ -79,8 +79,8 @@ const questions = function promptUser() {
                 const results = await db.getAllRolesNameQuery();
                 const roles = getRowsValues(results);
                 const resultsEmp = await db.getAllEmployesNameQuery();
-                const names = getRowsValues(resultsEmp);
-                names.push('None');
+                const names = ['None'];
+                names.push(getRowsValues(resultsEmp));
                 inquirer.prompt([
                     {
                         type: 'input',
@@ -96,37 +96,38 @@ const questions = function promptUser() {
                         type: 'list',
                         message: `What is employee's role?`,
                         name: 'role',
-                        choices:roles
+                        choices: roles
                     },
                     {
                         type: 'list',
                         message: `Who is employee's manager?`,
                         name: 'manager',
-                        choices:names
+                        choices: names
                     }
                 ]).then(async (answer) => {
                     await db.addEmployeeQuery(`${answer.firstname}`, `${answer.lastname}`, `${answer.role}`, `${answer.manager}`);
                     promptUser();
                 });
             } else if (selectedOption === 'Update an employee role') {
+                const resultsEmp = await db.getAllEmployesNameQuery();
+                const names = getRowsValues(resultsEmp);
+                const results = await db.getAllRolesNameQuery();
+                const roles = getRowsValues(results);
                 inquirer.prompt([
                     {
-                        type: 'input',
-                        name: 'firstname',
-                        message: 'Enter first name'
+                        type: 'list',
+                        message: `What employee's role do you want to update?`,
+                        name: 'employee',
+                        choices: names
                     },
                     {
-                        type: 'input',
-                        name: 'lastname',
-                        message: 'Enter last name'
-                    },
-                    {
-                        type: 'input',
+                        type: 'list',
+                        message: `What role do you want to assign the selected employee?`,
                         name: 'role',
-                        message: 'Enter new role'
+                        choices: roles
                     }
                 ]).then(async (answer) => {
-                    await db.updateEmployeeRoleQuery(`${answer.firstname}`, `${answer.lastname}`, `${answer.role}`, `${answer.manager}`);
+                    await db.updateEmployeeRoleQuery(`${answer.employee}`, `${answer.role}`);
                     promptUser();
                 });
             } else if (selectedOption === 'Quit') {
