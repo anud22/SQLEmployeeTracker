@@ -25,6 +25,7 @@ class Database {
         });
     }
     getAllDepartmentsQuery = async () => await this.executeQuery('SELECT * FROM department order by id;');
+    getAllDepartmentsNameQuery = async () => await this.executeQuery('SELECT name FROM department order by name;');
     getAllRolesQuery = async () => await this.executeQuery('SELECT * FROM role;');
     getAllEmployeesQuery = async () => await this.executeQuery('SELECT * FROM employee;');
     addDepartmentQuery = async (name) => {

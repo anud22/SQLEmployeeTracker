@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 const Database = require('./db/Database');
-const displayResults = require('./db/Helper');
+const {displayResults, getRowsValues} = require('./db/Helper');
 
 // Connect to database
 const db = new Database();
@@ -9,7 +9,7 @@ const questions = function promptUser() {
         .prompt([
             {
                 type: 'list',
-                message: 'Choose an option',
+                message: 'What would you like to do?',
                 name: 'question',
                 choices: [
                     'View all departments',
@@ -28,7 +28,7 @@ const questions = function promptUser() {
             console.log(`You selected: ${selectedOption}`);
             if (selectedOption === 'View all departments') {
                 const departments = await db.getAllDepartmentsQuery();
-               displayResults(departments);
+                displayResults(departments);
                 promptUser();
             } else if (selectedOption === 'View all roles') {
                 const roles = await db.getAllRolesQuery();
@@ -43,7 +43,7 @@ const questions = function promptUser() {
                     {
                         type: 'input',
                         name: 'department',
-                        message: 'Enter department'
+                        message: 'What is the name of the department?'
                     },
                 ])
                     .then(async (answer) => {
@@ -51,21 +51,24 @@ const questions = function promptUser() {
                         promptUser();
                     });
             } else if (selectedOption === 'Add a role') {
+                const departments = await db.getAllDepartmentsNameQuery();
+                const departmentNames = getRowsValues(departments);
                 inquirer.prompt([
                     {
                         type: 'input',
                         name: 'title',
-                        message: 'Enter title'
+                        message: 'What is the name of the role?'
                     },
                     {
                         type: 'input',
                         name: 'salary',
-                        message: 'Enter salary'
+                        message: 'What is the salary of the role?'
                     },
                     {
-                        type: 'input',
+                        type: 'list',
+                        message: 'Which department does the role belong to?',
                         name: 'department',
-                        message: 'Enter department'
+                        choices:departmentNames
                     },
                 ])
                     .then(async (answer) => {
