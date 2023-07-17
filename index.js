@@ -115,7 +115,7 @@ const questions = function promptUser() {
                         message: 'Enter new role'
                     }
                 ]).then(async (answer) => {
-                    await db.updateEmployeeRollQuery(`${answer.firstname}`, `${answer.lastname}`, `${answer.role}`, `${answer.manager}`);
+                    await db.updateEmployeeRoleQuery(`${answer.firstname}`, `${answer.lastname}`, `${answer.role}`, `${answer.manager}`);
                     promptUser();
                 });
             } else if (selectedOption === 'Quit') {

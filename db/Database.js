@@ -84,7 +84,7 @@ class Database {
     getNextIdFromEmployeeQuery = async () => {
         try {
             const rows = await this.executeQuery('SELECT max(id) AS maxId FROM employee;');
-            const maxId = rows[0]['maxId'];
+            const maxId = rows[0]['maxId'] + 1;
             return maxId;
         } catch (err) {
             console.error('Error occurred while fetching the id from employee');
@@ -94,18 +94,18 @@ class Database {
 
     getRoleIdQuery = async (role) => {
         try {
-            const rows = await this.executeQuery(`SELECT id FROM role where title = ${role};`);
+            const rows = await this.executeQuery(`SELECT id FROM role where title = '${role}';`);
             const id = rows[0]['id'];
             return id;
         } catch (err) {
-            console.error('Error occurred while fetching the id from role');
+            console.error('Error occurred - Role not present');
             return null;
         }
     };
 
     getManagerIdQuery = async (firstname, lastname) => {
         try {
-            const rows = await this.executeQuery(`SELECT id FROM employee where firstname = ${firstname} and lastname = ${lastname};`);
+            const rows = await this.executeQuery(`SELECT id FROM employee where first_name = '${firstname}' and last_name = '${lastname}';`);
             const id = rows[0]['id'];
             return id;
         } catch (err) {
@@ -116,15 +116,24 @@ class Database {
 
     addEmployeeQuery = async (firstname, lastname, role, manager) => {
         try {
-            const id = await this.getNextIdFromEmployeeQuery();
             const roleId = await this.getRoleIdQuery(role);
-            const managerFirstname = manager.split(" ")[0];
-            const managerLastname = manager.split(" ")[1];
-            const managerId = await this.getEmployeeManagerId(managerFirstname, managerLastname);
-            await this.executeQuery(`INSERT INTO employee (id, first_name, last_name, role_id, manager_id) VALUES(${id}, ${firstname}, ${lastname}, ${roleId} , ${managerId});`);
+            if (!roleId) {
+                throw new Error('Role not found');
+            }
+            let managerId = null;
+            if (manager) {
+                const managerFirstname = manager.split(" ")[0];
+                const managerLastname = manager.split(" ")[1];
+                managerId = await this.getManagerIdQuery(managerFirstname, managerLastname);
+                if (!managerId) {
+                    throw new Error('Manager not found');
+                }
+            }
+            const id = await this.getNextIdFromEmployeeQuery();
+            await this.executeQuery(`INSERT INTO employee (id, first_name, last_name, role_id, manager_id) VALUES(${id}, '${firstname}', '${lastname}', ${roleId} , ${managerId});`);
             console.error('Employee added ', firstname, lastname);
         } catch (err) {
-            console.error('Employee not added');
+            console.error(err, 'Employee not added');
         }
     }
     /*
