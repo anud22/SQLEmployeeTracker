@@ -50,11 +50,74 @@ const questions = function promptUser() {
                         promptUser();
                     });
             } else if (selectedOption === 'Add a role') {
-                // Code to handle adding a role
+                inquirer.prompt([
+                    {
+                        type: 'input',
+                        name: 'title',
+                        message: 'Enter title'
+                    },
+                    {
+                        type: 'input',
+                        name: 'salary',
+                        message: 'Enter salary'
+                    },
+                    {
+                        type: 'input',
+                        name: 'department',
+                        message: 'Enter department'
+                    },
+                ])
+                    .then(async (answer) => {
+                        await db.addRoleQuery(`${answer.title}`, `${answer.salary}`, `${answer.department}`);
+                        promptUser();
+                    });
             } else if (selectedOption === 'Add an employee') {
-                // Code to handle adding an employee
+                inquirer.prompt([
+                    {
+                        type: 'input',
+                        name: 'firstname',
+                        message: 'Enter first name'
+                    },
+                    {
+                        type: 'input',
+                        name: 'lastname',
+                        message: 'Enter last name'
+                    },
+                    {
+                        type: 'input',
+                        name: 'role',
+                        message: 'Enter role'
+                    },
+                    {
+                        type: 'input',
+                        name: 'manager',
+                        message: 'Enter manager'
+                    }
+                ]).then(async (answer) => {
+                    await db.addEmployeeQuery(`${answer.firstname}`, `${answer.lastname}`, `${answer.role}`, `${answer.manager}`);
+                    promptUser();
+                });
             } else if (selectedOption === 'Update an employee role') {
-                // Code to handle updating an employee role
+                inquirer.prompt([
+                    {
+                        type: 'input',
+                        name: 'firstname',
+                        message: 'Enter first name'
+                    },
+                    {
+                        type: 'input',
+                        name: 'lastname',
+                        message: 'Enter last name'
+                    },
+                    {
+                        type: 'input',
+                        name: 'role',
+                        message: 'Enter new role'
+                    }
+                ]).then(async (answer) => {
+                    await db.updateEmployeeRollQuery(`${answer.firstname}`, `${answer.lastname}`, `${answer.role}`, `${answer.manager}`);
+                    promptUser();
+                });
             } else if (selectedOption === 'Quit') {
                 console.log('Goodbye!');
                 process.exit(0);
