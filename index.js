@@ -51,8 +51,8 @@ const questions = function promptUser() {
                         promptUser();
                     });
             } else if (selectedOption === 'Add a role') {
-                const departments = await db.getAllDepartmentsNameQuery();
-                const departmentNames = getRowsValues(departments);
+                const results = await db.getAllDepartmentsNameQuery();
+                const departmentNames = getRowsValues(results);
                 inquirer.prompt([
                     {
                         type: 'input',
@@ -76,26 +76,33 @@ const questions = function promptUser() {
                         promptUser();
                     });
             } else if (selectedOption === 'Add an employee') {
+                const results = await db.getAllRolesNameQuery();
+                const roles = getRowsValues(results);
+                const resultsEmp = await db.getAllEmployesNameQuery();
+                const names = getRowsValues(resultsEmp);
+                names.push('None');
                 inquirer.prompt([
                     {
                         type: 'input',
                         name: 'firstname',
-                        message: 'Enter first name'
+                        message: `What is the employee's first name?`
                     },
                     {
                         type: 'input',
                         name: 'lastname',
-                        message: 'Enter last name'
+                        message: `What is the employee's last name?`
                     },
                     {
-                        type: 'input',
+                        type: 'list',
+                        message: `What is employee's role?`,
                         name: 'role',
-                        message: 'Enter role'
+                        choices:roles
                     },
                     {
-                        type: 'input',
+                        type: 'list',
+                        message: `Who is employee's manager?`,
                         name: 'manager',
-                        message: 'Enter manager'
+                        choices:names
                     }
                 ]).then(async (answer) => {
                     await db.addEmployeeQuery(`${answer.firstname}`, `${answer.lastname}`, `${answer.role}`, `${answer.manager}`);

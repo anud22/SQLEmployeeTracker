@@ -26,13 +26,15 @@ class Database {
     }
     getAllDepartmentsQuery = async () => await this.executeQuery('SELECT * FROM department order by id;');
     getAllDepartmentsNameQuery = async () => await this.executeQuery('SELECT name FROM department order by name;');
+    getAllRolesNameQuery = async () => await this.executeQuery('SELECT title FROM role order by title;');
+    getAllEmployesNameQuery = async () => await this.executeQuery(`SELECT CONCAT(first_name, ' ', last_name) FROM employee order by first_name;`);
     getAllRolesQuery = async () => await this.executeQuery('SELECT * FROM role;');
     getAllEmployeesQuery = async () => await this.executeQuery('SELECT * FROM employee;');
     addDepartmentQuery = async (name) => {
         try {
             let id = await this.getNextIdFromDepartmentsQuery() + 1;
             await this.executeQuery(`INSERT INTO department(id, name) VALUES (${id}, '${name}');`);
-            console.log('Department added ', `name = ${name}`);
+            console.log(`Department ${name} added to the database`);
         } catch (err) {
             console.error('Department not added');
         }
@@ -43,7 +45,7 @@ class Database {
             let deptId = await this.getDepartmentId(department);
             let roleId = await this.getNextRoleId() + 1;
             await this.executeQuery(`INSERT INTO role(id, title, salary, department_id) VALUES (${roleId}, '${title}', ${salary}, ${deptId});`);
-            console.error('Role added ', title);
+            console.log(`Role ${title} added to the database`);
         } catch (err) {
             console.error('Role not added');
         }
@@ -122,7 +124,7 @@ class Database {
                 throw new Error('Role not found');
             }
             let managerId = null;
-            if (manager) {
+            if (!manager.toLowerCase().includes('none')) {
                 const managerFirstname = manager.split(" ")[0];
                 const managerLastname = manager.split(" ")[1];
                 managerId = await this.getManagerIdQuery(managerFirstname, managerLastname);
@@ -132,7 +134,7 @@ class Database {
             }
             const id = await this.getNextIdFromEmployeeQuery();
             await this.executeQuery(`INSERT INTO employee (id, first_name, last_name, role_id, manager_id) VALUES(${id}, '${firstname}', '${lastname}', ${roleId} , ${managerId});`);
-            console.error('Employee added ', firstname, lastname);
+            console.log(`Employee ${firstname}` + ' ' + `${lastname} added in the database`);
         } catch (err) {
             console.error(err, 'Employee not added');
         }
