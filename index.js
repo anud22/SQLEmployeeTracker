@@ -22,17 +22,33 @@ const questions = function promptUser() {
                 ]
             }
         ])
-        .then((answers) => {
+        .then(async (answers) => {
             const selectedOption = answers.question;
             console.log(`You selected: ${selectedOption}`);
             if (selectedOption === 'View all departments') {
-                db.getAllDepartmentsQuery();
+                const departments = await db.getAllDepartmentsQuery();
+                console.table(departments);
+                promptUser();
             } else if (selectedOption === 'View all roles') {
-                db.getAllRolesQuery();
+                const roles = await db.getAllRolesQuery();
+                console.table(roles);
+                promptUser();
             } else if (selectedOption === 'View all employees') {
-                db.getAllEmployeesQuery();
+                const employees = await db.getAllEmployeesQuery();
+                console.table(employees);
+                promptUser();
             } else if (selectedOption === 'Add a department') {
-                // Code to handle adding a department
+                inquirer.prompt([
+                    {
+                        type: 'input',
+                        name: 'department',
+                        message: 'Enter department'
+                    },
+                ])
+                    .then(async (answer) => {
+                        await db.addDepartmentQuery(`${answer.department}`);
+                        promptUser();
+                    });
             } else if (selectedOption === 'Add a role') {
                 // Code to handle adding a role
             } else if (selectedOption === 'Add an employee') {
@@ -43,8 +59,7 @@ const questions = function promptUser() {
                 console.log('Goodbye!');
                 process.exit(0);
             }
-            // Call promptUser again to show the options after handling the selected option
-            promptUser();
+
         });
 };
 

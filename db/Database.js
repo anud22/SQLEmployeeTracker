@@ -13,22 +13,41 @@ class Database {
         );
     }
 
-
     executeQuery(query) {
-        try {
+        return new Promise((resolve, reject) => {
             this.dbConnection.promise().query(query).then(([rows, fields]) => {
-                console.table(rows);
+                resolve(rows);
+
+            }).catch((err) => {
+                reject(err);
             });
+        });
+    }
+    getAllDepartmentsQuery = async () => await this.executeQuery('SELECT * FROM department;');
+    getAllRolesQuery = async () => await this.executeQuery('SELECT * FROM role;');
+    getAllEmployeesQuery = async () => await this.executeQuery('SELECT * FROM employee;');
+    addDepartmentQuery = async (name) => {
+        try {
+            let id = await this.getHighestIdFromDepartmentsQuery() + 1;
+            await this.executeQuery(`INSERT INTO department(id, name) VALUES (${id}, '${name}');`);
+            console.log('Department added ', `name = ${name}`);
         } catch (err) {
-            console.error('Error happened while executing query', err);
+            console.error('Error occurred while executing the query:', err.sqlMessage);
         }
     }
 
-    getAllDepartmentsQuery = () => this.executeQuery('SELECT * FROM department;');
-    getAllRolesQuery = () => this.executeQuery('SELECT * FROM role;');
-    getAllEmployeesQuery = () => this.executeQuery('SELECT * FROM employee;');
+    getHighestIdFromDepartmentsQuery = async () => {
+        try {
+            const rows = await this.executeQuery('SELECT max(id) AS maxId FROM department;');
+            const maxId = rows[0]['maxId'];
+            return maxId;
+        } catch (err) {
+            console.error('Error occurred while executing the query:', err);
+            throw err;
+        }
+    };
+
     /*
-    const addDepartmentQuery = 'INSERT INTO department(id, name) VALUES (?, ?);';
     const addRoleQuery = 'INSERT INTO role(id, title, salary, department_id) VALUES (?, ?, ?, ?);';
     const addEmployeeQuery = 'INSERT INTO employee (id, first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?, ?);';
     const updateEmployeeRoleQuery = 'UPDATE employees SET role_id = ? WHERE first_name = ? AND last_name = ?;';
