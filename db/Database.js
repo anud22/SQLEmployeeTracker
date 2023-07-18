@@ -157,6 +157,16 @@ class Database {
             console.error(err, 'Employee role not updated');
         }
     }
+    deleteEmployeeQuery = async (name) => {
+        try {
+            const firstname = name.split(" ")[0];
+            const lastname = name.split(" ")[1];
+            await this.executeQuery(`DELETE FROM employee WHERE first_name = '${firstname}' and last_name= '${lastname}';`);
+            console.log(`Employee ${firstname}` + ' ' + `${lastname} deleted in the database`);
+        } catch (err) {
+            console.error(err, 'Employee not deleted');
+        }
+    }
 
     updateEmployeeManagerQuery = async (name, managerName) => {
         try {

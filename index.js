@@ -23,6 +23,7 @@ const questions = function promptUser() {
                     'View employees by department',
                     'View the total utilized budget of a department',
                     'Update employee manager',
+                    'Delete Employee',
                     'Quit'
                 ]
             }
@@ -169,6 +170,21 @@ const questions = function promptUser() {
                     await db.updateEmployeeManagerQuery(`${answer.employee}`, `${answer.manager}`);
                     promptUser();
                 });
+            } else if (selectedOption === 'Delete Employee') {
+                const resultsEmp = await db.getAllEmployesNameQuery();
+                const names = getRowsValues(resultsEmp);
+                inquirer.prompt([
+                    {
+                        type: 'list',
+                        message: `What employee you want to delete?`,
+                        name: 'employee',
+                        choices: names
+                    }
+                ])
+                    .then(async (answer) => {
+                        await db.deleteEmployeeQuery(`${answer.employee}`);
+                        promptUser();
+                    });
             }
             else if (selectedOption === 'Quit') {
                 console.log('Goodbye!');
