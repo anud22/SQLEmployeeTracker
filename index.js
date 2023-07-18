@@ -19,6 +19,10 @@ const questions = function promptUser() {
                     'Add a role',
                     'Add an employee',
                     'Update an employee role',
+                    'View employees by manager',
+                    'View employees by department',
+                    'View the total utilized budget of a department',
+                    'Update employee manager',
                     'Quit'
                 ]
             }
@@ -79,8 +83,9 @@ const questions = function promptUser() {
                 const results = await db.getAllRolesNameQuery();
                 const roles = getRowsValues(results);
                 const resultsEmp = await db.getAllEmployesNameQuery();
+                const empNames = getRowsValues(resultsEmp);
                 const names = ['None'];
-                names.push(getRowsValues(resultsEmp));
+                names.push(...empNames);
                 inquirer.prompt([
                     {
                         type: 'input',
@@ -130,7 +135,42 @@ const questions = function promptUser() {
                     await db.updateEmployeeRoleQuery(`${answer.employee}`, `${answer.role}`);
                     promptUser();
                 });
-            } else if (selectedOption === 'Quit') {
+            } else if (selectedOption === 'View employees by manager') {
+                const results = await db.getEmployeesByManager();
+                displayResults(results);
+                promptUser();
+            } else if (selectedOption === 'View employees by department') {
+                const results = await db.getEmployeesByDepartment();
+                displayResults(results);
+                promptUser();
+            } else if (selectedOption === 'View the total utilized budget of a department') {
+                const results = await db.getSalariesSumByDepartment();
+                displayResults(results);
+                promptUser();
+            } else if (selectedOption === 'Update employee manager') {
+                const resultsEmp = await db.getAllEmployesNameQuery();
+                const names = getRowsValues(resultsEmp);
+                const managerNames = ['None'];
+                managerNames.push(...names);
+                inquirer.prompt([
+                    {
+                        type: 'list',
+                        message: `What employee's manager you want to update?`,
+                        name: 'employee',
+                        choices: names
+                    },
+                    {
+                        type: 'list',
+                        message: `Who will be new manager?`,
+                        name: 'manager',
+                        choices: managerNames
+                    }
+                ]).then(async (answer) => {
+                    await db.updateEmployeeManagerQuery(`${answer.employee}`, `${answer.manager}`);
+                    promptUser();
+                });
+            }
+            else if (selectedOption === 'Quit') {
                 console.log('Goodbye!');
                 process.exit(0);
             }

@@ -39,7 +39,9 @@ class Database {
             console.error('Department not added');
         }
     }
-
+    getEmployeesByManager = async () => await this.executeQuery(`SELECT e1.id 'Employee Id' , concat(e1.first_name,' ',  e1.last_name) 'Employee Name' , e1.manager_id 'Manager Id', concat(e2.first_name,' ', e2.last_name) 'Manager Name' from employee e1 JOIN employee e2 ON e1.manager_id = e2.id;`);
+    getEmployeesByDepartment = async () => await this.executeQuery(`SELECT first_name 'First Name', last_name 'Last Name', name 'Department' from employee emp JOIN role on emp.role_id = role.id JOIN department dept on dept.id = role.department_id`);
+    getSalariesSumByDepartment = async () => await this.executeQuery(`SELECT dept.id 'Department id', name 'Department Name', sum(salary) 'Budget' from role JOIN department dept on role.department_id = dept.id group by dept.id, name;`);
     addRoleQuery = async (title, salary, department) => {
         try {
             let deptId = await this.getDepartmentId(department);
@@ -152,9 +154,23 @@ class Database {
             await this.executeQuery(`UPDATE employee SET role_id = ${roleId} WHERE first_name = '${firstname}' and last_name= '${lastname}';`);
             console.log(`Employee ${firstname}` + ' ' + `${lastname} role was changed to ${role} in the database`);
         } catch (err) {
-            console.error(err, 'Employee not added');
+            console.error(err, 'Employee role not updated');
         }
     }
+
+    updateEmployeeManagerQuery = async (name, managerName) => {
+        try {
+            let managerId = null;
+            if (!managerName.toLowerCase().includes('none')) {
+                managerId = await this.getEmployeeIdQuery(managerName.split(" ")[0], managerName.split(" ")[1]);
+            }
+            await this.executeQuery(`UPDATE employee SET manager_id = ${managerId} WHERE first_name = '${name.split(" ")[0]}' and last_name= '${name.split(" ")[1]}';`);
+            console.log(`Employee ${name}'s manager was changed to ${managerName} in the database`);
+        } catch (err) {
+            console.error(err, 'Employee manager not updated');
+        }
+    }
+
 
 }
 

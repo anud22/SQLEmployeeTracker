@@ -10,7 +10,7 @@ displayResults = (results) => {
         rowValues = rowValues.map((v) => v === null ? 'null' : v);
         table.push(rowValues);
     });
-    console.log(table.toString());
+    console.log(...table);
 }
 
 getRowsValues = (results) => {
