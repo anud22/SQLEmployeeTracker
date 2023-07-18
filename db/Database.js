@@ -119,6 +119,17 @@ class Database {
         }
     };
 
+    getEmployeesWithRoleQuery = async (roleId) => {
+        try {
+            const rows = await this.executeQuery(`SELECT id FROM employee WHERE role_id = ${roleId};`);
+            const ids = rows.map(row => row.id);
+            return ids;
+        } catch (err) {
+            console.error('Error occurred while fetching the employees with role ', roleId);
+            return null;
+        }
+    };
+
     addEmployeeQuery = async (firstname, lastname, role, manager) => {
         try {
             const roleId = await this.getRoleIdQuery(role);
@@ -157,17 +168,6 @@ class Database {
             console.error(err, 'Employee role not updated');
         }
     }
-    deleteEmployeeQuery = async (name) => {
-        try {
-            const firstname = name.split(" ")[0];
-            const lastname = name.split(" ")[1];
-            await this.executeQuery(`DELETE FROM employee WHERE first_name = '${firstname}' and last_name= '${lastname}';`);
-            console.log(`Employee ${firstname}` + ' ' + `${lastname} deleted in the database`);
-        } catch (err) {
-            console.error(err, 'Employee not deleted');
-        }
-    }
-
     updateEmployeeManagerQuery = async (name, managerName) => {
         try {
             let managerId = null;
