@@ -36,7 +36,7 @@ Github link to access the project is [Github URL](https://github.com/anud22/SQLE
 
 
 ## Video
-[Project video](https://drive.google.com/file/d/1i8yOXTL4nRL_Mm_tlWhqy-MOo6Qv-4bI/view)
+[Project video](https://drive.google.com/file/d/10to1yp9Wz5TrZye7ny2XWKzStn9ivP9C/view)
  
  ## Questions
  #### If you have any questions or need further clarification, feel free to reach out. We are here to help! You can ask questions by creating an issue in this repository or by reaching out to me 
